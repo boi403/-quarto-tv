@@ -1,0 +1,294 @@
+/* Paleta tirada do logo: sol amarelo (#FFF700) + faixas vermelhas (#DE2219)
+   sobre fundo escuro quente — escuro funciona melhor na TV do quarto. */
+:root {
+  --qbg: #120d0c;
+  --qsurface: #1d1614;
+  --qsurface2: #281e1b;
+  --qsun: #fff700;
+  --qsun-soft: #fff59a;
+  --qred: #de2219;
+  --qred-deep: #a8160f;
+  --qline: #352724;
+  --qtext: #f7f3ee;
+  --qmuted: #a89c95;
+  --qbrand-gradient: linear-gradient(90deg, var(--qsun) 0%, var(--qsun) 22%, var(--qred) 48%, var(--qred) 100%);
+  --qfont: 'Manrope', sans-serif;
+}
+
+.quarto-root {
+  background:
+    radial-gradient(circle at 12% -10%, rgba(255, 247, 0, .08), transparent 40%),
+    var(--qbg);
+  color: var(--qtext);
+  font-family: var(--qfont);
+  min-height: 100vh;
+}
+
+.quarto-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 28px;
+}
+
+/* Faixa sol → vermelho no lugar da borda, ecoando o logo */
+.quarto-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--qbrand-gradient);
+}
+
+.quarto-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.quarto-logo {
+  height: 44px;
+  width: auto;
+}
+
+.quarto-brand {
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -.01em;
+  color: var(--qtext);
+  font-size: 1.4rem;
+}
+
+.quarto-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  padding: 28px;
+}
+
+.quarto-tile {
+  position: relative;
+  overflow: hidden;
+  background: var(--qsurface);
+  border: 2px solid var(--qline);
+  border-radius: 16px;
+  padding: 28px 22px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+/* Duas faixas inclinadas no canto, como as do logo — aparecem no foco */
+.quarto-tile::before,
+.quarto-tile::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  width: 14px;
+  height: 140%;
+  background: var(--qred);
+  transform: skewX(-28deg);
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.quarto-tile::before { right: 38px; }
+.quarto-tile::after { right: 16px; }
+
+.quarto-tile:hover,
+.quarto-tile:focus-visible {
+  border-color: var(--qred);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px -12px rgba(222, 34, 25, .55);
+  outline: none;
+}
+.quarto-tile:hover::before,
+.quarto-tile:hover::after,
+.quarto-tile:focus-visible::before,
+.quarto-tile:focus-visible::after { opacity: .9; }
+
+.quarto-tile-icon {
+  font-size: 1.8rem;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--qsun);
+}
+
+.quarto-tile-label {
+  font-weight: 800;
+  font-size: 1.15rem;
+}
+
+.quarto-tile-sub {
+  color: var(--qmuted);
+  font-size: .85rem;
+}
+
+.quarto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  padding: 24px 28px;
+}
+
+.quarto-card {
+  background: var(--qsurface);
+  border: 2px solid var(--qline);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+}
+
+.quarto-card:hover,
+.quarto-card:focus-visible {
+  border-color: var(--qred);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.quarto-card img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  background: var(--qsurface2);
+}
+
+.quarto-card--channel img {
+  aspect-ratio: 16/9;
+  object-fit: contain;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.quarto-card-logo-empty {
+  aspect-ratio: 16/9;
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  text-align: center;
+  font-weight: 800;
+  color: var(--qsun);
+  background: var(--qsurface2);
+}
+
+.quarto-card-title {
+  padding: 10px 12px;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.quarto-highlight {
+  color: var(--qsun);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.quarto-back {
+  background: var(--qred);
+  border: 2px solid var(--qred);
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+.quarto-back:hover,
+.quarto-back:focus-visible {
+  background: var(--qred-deep);
+  border-color: var(--qsun);
+  outline: none;
+}
+
+.quarto-back:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+/* Tela "escaneie o QR" — room service e solicitações via WhatsApp */
+.quarto-qr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  padding: 48px 28px;
+}
+
+.quarto-qr-code {
+  background: #fff;
+  padding: 18px;
+  border-radius: 20px;
+  border: 4px solid var(--qsun);
+  line-height: 0;
+}
+
+.quarto-qr-texto {
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.quarto-qr-texto h2 {
+  margin: 0;
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.8rem;
+}
+
+.quarto-qr-texto ol {
+  margin: 0;
+  padding-left: 22px;
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+.quarto-qr-texto ol li::marker {
+  color: var(--qred);
+  font-weight: 800;
+}
+
+/* Configuração da TV (uma vez por quarto) */
+.quarto-config {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 48px 28px;
+  max-width: 420px;
+}
+
+.quarto-config label {
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.quarto-config input {
+  width: 100%;
+  box-sizing: border-box;
+  font: 800 3rem var(--qfont);
+  letter-spacing: .1em;
+  padding: 12px 18px;
+  color: var(--qtext);
+  background: var(--qsurface);
+  border: 3px solid var(--qline);
+  border-radius: 14px;
+}
+
+.quarto-config input:focus {
+  border-color: var(--qsun);
+  outline: none;
+}
