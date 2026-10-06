@@ -46,7 +46,7 @@ module.exports = function quartoRouter(pool, io) {
   // pra tela do quarto abrir/embutir (Kotlin WebView shell) ou redirecionar.
   router.get('/room-service/link', (req, res) => {
     const { room } = req.query;
-    const baseUrl = process.env.ROOM_SERVICE_GUEST_URL; // ex: https://roomservice.araguaiahotel.com/menu
+    const baseUrl = process.env.ROOM_SERVICE_GUEST_URL; // ex: https://roomservice.seuhotel.com/menu
     if (!baseUrl) {
       return res.status(500).json({ error: 'ROOM_SERVICE_GUEST_URL não configurada.' });
     }

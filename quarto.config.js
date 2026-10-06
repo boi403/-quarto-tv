@@ -2,7 +2,7 @@
 // {quarto} e {hospede} nas mensagens são trocados pelos dados do check-in.
 
 // WhatsApp da recepção — só dígitos, com 55 + DDD
-export const WHATSAPP_RECEPCAO = '5566996029294';
+export const WHATSAPP_RECEPCAO = '5500000000000';
 
 // Room service: cada opção vira um QR que abre o WhatsApp com a mensagem pronta.
 // Pra um restaurante parceiro com número próprio, preencha `whatsapp` nele.
@@ -23,7 +23,7 @@ export const ROOM_SERVICE_OPCOES = [
   // {
   //   key: 'pizzaria', icon: '🍕', label: 'Pizzaria Parceira', sub: 'Entrega no hotel',
   //   whatsapp: '5566900000000',
-  //   mensagem: 'Olá! Estou no Araguaia Palace Hotel, quarto {quarto}, e gostaria de fazer um pedido.',
+  //   mensagem: 'Olá! Estou no hotel, quarto {quarto}, e gostaria de fazer um pedido.',
   // },
 ];
 

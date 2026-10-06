@@ -23,9 +23,7 @@ npm run canais   # puxa e testa os canais do iptv-org (repita de tempos em tempo
 npm run tv       # gera e serve a tela na rede em http://IP-DO-PC:8080
 ```
 
-- **Número do quarto**: na primeira vez a TV pede o número (teclas do controle
-  + OK) e memoriza. Ou abra direto `http://IP-DO-PC:8080/?quarto=305`.
-  Pra trocar: `http://IP-DO-PC:8080/?configurar=1`.
+- Todas as TVs abrem a mesma tela (Canais ao vivo e Filmes), sem número de quarto.
 - **WhatsApp, opções do room service e solicitações**: `quarto.config.js`.
 - O PC que roda `npm run tv` precisa ficar ligado e com IP fixo na rede.
 
@@ -37,12 +35,12 @@ npm run tv       # gera e serve a tela na rede em http://IP-DO-PC:8080
    const quartoRouter = require('./routes/quarto');
    app.use('/api/quarto', quartoRouter(pool, io)); // io é o mesmo do room service
    ```
-3. **Env**: adicione `ROOM_SERVICE_GUEST_URL=https://roomservice.araguaiahotel.com/menu`
+3. **Env**: adicione `ROOM_SERVICE_GUEST_URL=https://roomservice.seuhotel.com/menu`
 4. **Frontend**: `HomeScreen.jsx` é o ponto de entrada — renderize ele recebendo
    `room` (número do quarto + nome do hóspede, vindo do PMS no check-in, igual
    já acontece na sinalização) e `hotelName`.
 5. **Kotlin WebView shell**: aponte a WebView pra rota que serve `HomeScreen`
-   (ex: `https://tv.araguaiahotel.com/quarto?token=...`), do mesmo jeito que já
+   (ex: `https://tv.seuhotel.com/quarto?token=...`), do mesmo jeito que já
    faz com a sinalização.
 
 ## Contrato de dados
@@ -59,7 +57,7 @@ npm run tv       # gera e serve a tela na rede em http://IP-DO-PC:8080
 
 ### `GET /api/quarto/room-service/link?room=305`
 ```json
-{ "url": "https://roomservice.araguaiahotel.com/menu?quarto=305" }
+{ "url": "https://roomservice.seuhotel.com/menu?quarto=305" }
 ```
 
 ### `POST /api/quarto/requests`
@@ -89,4 +87,4 @@ npm install hls.js
 - Ícones dos tiles estão como emoji (placeholder) — trocar pelos ícones do
   seu design system, se já tiver um pro PMS/sinalização.
 - `RequestsScreen` está com 4 tipos rápidos fixos — ajuste a lista pro que
-  faz sentido pro Araguaia (ex: adicionar "Ar-condicionado", "Wi-Fi").
+  faz sentido pro seu hotel (ex: adicionar "Ar-condicionado", "Wi-Fi").
