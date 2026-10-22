@@ -10,6 +10,8 @@ export default defineConfig({
     target: 'es2017',
   },
   // --host: libera o acesso pelas TVs na rede do hotel
-  server: { host: true, port: 5188 },
-  preview: { host: true, port: 8080 },
+  // allowedHosts: true pq algumas Smart TVs mandam o header Host de um jeito
+  // que o Vite não reconhece como IP e bloqueia com 403 "Forbidden"
+  server: { host: true, port: 5188, allowedHosts: true },
+  preview: { host: true, port: 8080, allowedHosts: true },
 });

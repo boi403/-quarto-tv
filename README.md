@@ -7,10 +7,12 @@ do SignalCloud (React + Node/Express + PostgreSQL, paleta dark/gold).
 ## O que é novo vs. o que reaproveita
 
 - **Canais e Filmes** — tabelas e rotas novas (`quarto_tv_channels`, `quarto_movies`).
-- **Room service** — **não duplica nada**. `RoomServiceScreen` só abre o sistema
-  de pedidos que você já tem (Node/Express/PostgreSQL/Socket.io/Mercado Pago),
-  passando o número do quarto. Configure a env `ROOM_SERVICE_GUEST_URL` apontando
-  pro cardápio mobile já existente.
+- **Room service** — **não duplica nada**. A rota `GET /room-service/link` em
+  `quarto.js` só devolve a URL do sistema de pedidos que você já tem
+  (Node/Express/PostgreSQL/Socket.io/Mercado Pago), passando o número do
+  quarto. Configure a env `ROOM_SERVICE_GUEST_URL` apontando pro cardápio
+  mobile já existente. (Sem tela própria no frontend atual — a TV não navega
+  pra essa opção.)
 - **Solicitações** — tabela e rotas novas (`quarto_requests`), com o mesmo
   padrão de evento em tempo real (Socket.io) que o painel de room service já usa,
   pra aparecer no painel da recepção.
@@ -24,7 +26,6 @@ npm run tv       # gera e serve a tela na rede em http://IP-DO-PC:8080
 ```
 
 - Todas as TVs abrem a mesma tela (Canais ao vivo e Filmes), sem número de quarto.
-- **WhatsApp, opções do room service e solicitações**: `quarto.config.js`.
 - O PC que roda `npm run tv` precisa ficar ligado e com IP fixo na rede.
 
 ## Integração
@@ -86,5 +87,3 @@ npm install hls.js
 
 - Ícones dos tiles estão como emoji (placeholder) — trocar pelos ícones do
   seu design system, se já tiver um pro PMS/sinalização.
-- `RequestsScreen` está com 4 tipos rápidos fixos — ajuste a lista pro que
-  faz sentido pro seu hotel (ex: adicionar "Ar-condicionado", "Wi-Fi").

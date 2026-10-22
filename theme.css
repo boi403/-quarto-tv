@@ -132,6 +132,15 @@
   font-size: .85rem;
 }
 
+.quarto-section-title {
+  margin: 20px 28px 0;
+  color: var(--qsun);
+  font-weight: 800;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
 .quarto-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -216,79 +225,3 @@
   cursor: not-allowed;
 }
 
-/* Tela "escaneie o QR" — room service e solicitações via WhatsApp */
-.quarto-qr {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 48px;
-  padding: 48px 28px;
-}
-
-.quarto-qr-code {
-  background: #fff;
-  padding: 18px;
-  border-radius: 20px;
-  border: 4px solid var(--qsun);
-  line-height: 0;
-}
-
-.quarto-qr-texto {
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.quarto-qr-texto h2 {
-  margin: 0;
-  font-weight: 800;
-  font-style: italic;
-  font-size: 1.8rem;
-}
-
-.quarto-qr-texto ol {
-  margin: 0;
-  padding-left: 22px;
-  line-height: 1.8;
-  font-size: 1.05rem;
-}
-
-.quarto-qr-texto ol li::marker {
-  color: var(--qred);
-  font-weight: 800;
-}
-
-/* Configuração da TV (uma vez por quarto) */
-.quarto-config {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 48px 28px;
-  max-width: 420px;
-}
-
-.quarto-config label {
-  font-weight: 800;
-  font-size: 1.3rem;
-}
-
-.quarto-config input {
-  width: 100%;
-  box-sizing: border-box;
-  font: 800 3rem var(--qfont);
-  letter-spacing: .1em;
-  padding: 12px 18px;
-  color: var(--qtext);
-  background: var(--qsurface);
-  border: 3px solid var(--qline);
-  border-radius: 14px;
-}
-
-.quarto-config input:focus {
-  border-color: var(--qsun);
-  outline: none;
-}

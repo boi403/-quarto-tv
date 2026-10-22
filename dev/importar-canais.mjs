@@ -10,7 +10,9 @@
 //   dev/canais-seed.sql  -> INSERTs pra quarto_tv_channels (ao vivo) e quarto_movies (filmes/séries)
 import { mkdir, writeFile } from 'node:fs/promises';
 
-const PAISES = process.argv.slice(2).length ? process.argv.slice(2) : ['br'];
+// Padrão: nacional (br) + um recorte internacional (eua, portugal, espanha).
+// Pra mudar, passe os códigos na linha de comando: node dev/importar-canais.mjs br us pt es ar
+const PAISES = process.argv.slice(2).length ? process.argv.slice(2) : ['br', 'us', 'pt', 'es'];
 const TIMEOUT_MS = 8000;
 const CONCORRENCIA = 25;
 // TV de hotel: fora conteúdo adulto
@@ -78,7 +80,8 @@ for (const pais of PAISES) {
   if (!res.ok) { console.error(`Lista de "${pais}" não encontrada (${res.status}).`); continue; }
   const lista = parseM3u(await res.text()).filter((c) => !GRUPOS_BLOQUEADOS.test(c.category));
   console.log(`${pais}: ${lista.length} canais na lista`);
-  todos.push(...lista);
+  const origem = pais === 'br' ? 'nacional' : 'internacional';
+  todos.push(...lista.map((c) => ({ ...c, pais, origem })));
 }
 
 // remove duplicados pela URL
@@ -132,6 +135,7 @@ await writeFile(new URL('movies', pastaApi), JSON.stringify(filmes.map((c) => ({
   video_url: c.stream_url,
   synopsis: `Canal de ${/series/i.test(c.category) ? 'séries' : 'filmes'} 24h`,
   category: c.category,
+  origem: c.origem,
   is_channel: true,
 }))));
 await writeFile(new URL('./canais-seed.sql', import.meta.url),
