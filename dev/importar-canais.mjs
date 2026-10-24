@@ -1,24 +1,47 @@
 // Importa canais da lista pública do iptv-org (github.com/iptv-org/iptv),
 // testa cada stream e guarda só os que respondem.
 //
-//   node dev/importar-canais.mjs            -> Brasil (padrão)
-//   node dev/importar-canais.mjs br pt us   -> vários países
+//   node dev/importar-canais.mjs                 -> Brasil (padrão)
+//   node dev/importar-canais.mjs br pt us        -> vários países
+//   node dev/importar-canais.mjs --allow-http br -> também aceita streams http:// (sem TLS)
 //
 // Gera:
 //   public/api/quarto/channels e movies -> lista usada pela tela (servida como arquivo)
 //   public/quarto.m3u    -> playlist pros apps de IPTV da TV (Smart IPTV, VLC)
 //   dev/canais-seed.sql  -> INSERTs pra quarto_tv_channels (ao vivo) e quarto_movies (filmes/séries)
+//
+// A lista do iptv-org é comunitária (qualquer um pode contribuir no GitHub
+// deles) e parte dos streams é http:// puro. Por padrão este script só aceita
+// stream_url https:// — um link http:// pode ser trocado por MITM e viraria
+// conteúdo arbitrário tocando nas TVs dos quartos. Use --allow-http só se
+// precisar mesmo de canais sem TLS, e revise manualmente o seed gerado
+// (dev/canais-seed.sql) antes de aplicar em produção.
 import { mkdir, writeFile } from 'node:fs/promises';
 
+const ARGS = process.argv.slice(2);
+const ALLOW_HTTP = ARGS.includes('--allow-http');
+const PAISES_ARGS = ARGS.filter((a) => !a.startsWith('--'));
 // Padrão: nacional (br) + um recorte internacional (eua, portugal, espanha).
 // Pra mudar, passe os códigos na linha de comando: node dev/importar-canais.mjs br us pt es ar
-const PAISES = process.argv.slice(2).length ? process.argv.slice(2) : ['br', 'us', 'pt', 'es'];
+const PAISES = PAISES_ARGS.length ? PAISES_ARGS : ['br', 'us', 'pt', 'es'];
 const TIMEOUT_MS = 8000;
 const CONCORRENCIA = 25;
 // TV de hotel: fora conteúdo adulto
 const GRUPOS_BLOQUEADOS = /xxx|adult/i;
 // Categorias que vão pra tela "Filmes"; o resto fica em "Canais ao vivo"
 const CATEGORIAS_FILMES = /^(movies|series|classic)$/i;
+
+function urlAceita(url) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return false; // URL malformada na lista upstream — descarta.
+  }
+  if (parsed.protocol === 'https:') return true;
+  if (parsed.protocol === 'http:') return ALLOW_HTTP;
+  return false; // outros esquemas (file:, javascript: etc.) nunca são aceitos.
+}
 
 function parseM3u(texto) {
   const linhas = texto.split(/\r?\n/);
@@ -78,7 +101,9 @@ let todos = [];
 for (const pais of PAISES) {
   const res = await fetch(`https://iptv-org.github.io/iptv/countries/${pais}.m3u`);
   if (!res.ok) { console.error(`Lista de "${pais}" não encontrada (${res.status}).`); continue; }
-  const lista = parseM3u(await res.text()).filter((c) => !GRUPOS_BLOQUEADOS.test(c.category));
+  const lista = parseM3u(await res.text())
+    .filter((c) => !GRUPOS_BLOQUEADOS.test(c.category))
+    .filter((c) => urlAceita(c.stream_url));
   console.log(`${pais}: ${lista.length} canais na lista`);
   const origem = pais === 'br' ? 'nacional' : 'internacional';
   todos.push(...lista.map((c) => ({ ...c, pais, origem })));
@@ -152,4 +177,8 @@ await writeFile(new URL('./canais-seed.sql', import.meta.url),
 
 console.log(`\nFuncionando: ${funcionando.length} de ${todos.length}`);
 console.log(`Ao vivo: ${aoVivo.length} | Filmes/séries: ${filmes.length}`);
-console.log(`Desses, ${soHttp} são http:// (sem https) — em página https o navegador bloqueia, precisam de proxy.`);
+if (ALLOW_HTTP) {
+  console.log(`Desses, ${soHttp} são http:// (sem TLS, aceitos por --allow-http) — sujeitos a MITM. Revise dev/canais-seed.sql antes de aplicar em produção.`);
+} else {
+  console.log(`Streams http:// (sem TLS) foram descartados por padrão. Use --allow-http se precisar deles — e revise dev/canais-seed.sql antes de aplicar em produção.`);
+}

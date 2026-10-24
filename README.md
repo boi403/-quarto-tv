@@ -27,6 +27,11 @@ npm run tv       # gera e serve a tela na rede em http://IP-DO-PC:8080
 
 - Todas as TVs abrem a mesma tela (Canais ao vivo e Filmes), sem número de quarto.
 - O PC que roda `npm run tv` precisa ficar ligado e com IP fixo na rede.
+- `npm run canais` só aceita streams `https://` por padrão (a lista do
+  iptv-org é comunitária e parte dos streams não tem TLS). Use
+  `node dev/importar-canais.mjs --allow-http <países>` se precisar de canais
+  `http://` mesmo assim, e revise `dev/canais-seed.sql` manualmente antes de
+  aplicar em produção.
 
 ## Integração
 
@@ -34,15 +39,29 @@ npm run tv       # gera e serve a tela na rede em http://IP-DO-PC:8080
 2. **API**: em `server.js`, monte o router:
    ```js
    const quartoRouter = require('./routes/quarto');
-   app.use('/api/quarto', quartoRouter(pool, io)); // io é o mesmo do room service
+   app.use('/api/quarto', quartoRouter(pool, io, {
+     requireStaffAuth: suaAuthDeStaffExistente, // mesmo middleware do painel de room service
+     verifyRoomRequest: suaValidacaoDeSessaoDoQuarto, // valida o ?token=... do passo 5
+   }));
    ```
-3. **Env**: adicione `ROOM_SERVICE_GUEST_URL=https://roomservice.seuhotel.com/menu`
+3. **Env**: adicione
+   - `ROOM_SERVICE_GUEST_URL=https://roomservice.seuhotel.com/menu`
+   - `QUARTO_STAFF_TOKEN=<token forte>` — só é usado se você **não** passar
+     `requireStaffAuth` no passo 2; nesse caso o painel da recepção
+     (`GET`/`PATCH /requests`) exige `Authorization: Bearer <QUARTO_STAFF_TOKEN>`,
+     e fica bloqueado (503) se a env não estiver definida. **Prefira sempre
+     passar o middleware de auth/sessão de staff real** — este token é só um
+     fallback simples, não um substituto da auth do resto do SignalCloud.
 4. **Frontend**: `HomeScreen.jsx` é o ponto de entrada — renderize ele recebendo
    `room` (número do quarto + nome do hóspede, vindo do PMS no check-in, igual
    já acontece na sinalização) e `hotelName`.
 5. **Kotlin WebView shell**: aponte a WebView pra rota que serve `HomeScreen`
    (ex: `https://tv.seuhotel.com/quarto?token=...`), do mesmo jeito que já
-   faz com a sinalização.
+   faz com a sinalização. Esse `token` de sessão do quarto é o que
+   `verifyRoomRequest` (passo 2) deve validar contra `room_number`, pra que
+   `POST /requests` e `GET /room-service/link` não aceitem qualquer número de
+   quarto informado pelo cliente. Sem essa opção configurada, essas rotas só
+   ficam protegidas por um rate limit básico (5 requisições/minuto por IP).
 
 ## Contrato de dados
 
